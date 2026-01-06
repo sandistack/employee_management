@@ -13,26 +13,49 @@ Aplikasi ini dibuat untuk mengelola:
 
 ## 🚀 Quick Start
 
-**⚠️ PENTING: Baca dokumentasi setup lengkap di [docs/01_setup.md](docs/01_setup.md)**
+**Just want to run the project?** Follow: **[Installation Guide](docs/01_installation.md)**
+
 ```bash
 # Clone repository
-git clone 
+git clone <repository-url> employee_management
 cd employee_management
 
-# Ikuti langkah-langkah di docs/01_setup.md
+# Create virtual environment
+python -m venv venv
+source venv/bin/activate  # Linux/Mac
+# atau: venv\Scripts\activate  # Windows
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Setup database
+cp .env.example .env
+python manage.py migrate
+python manage.py createsuperuser
+
+# Run server
+python manage.py runserver
 ```
+
+Visit: http://127.0.0.1:8000/admin/
 
 ## 📚 Documentation
 
+### For Users/Developers
 | Dokumen | Deskripsi |
 |---------|-----------|
-| [Setup Guide](docs/01_setup.md) | Instalasi & setup dari NOL |
-| [Project Structure](docs/02_structure.md) | Penjelasan struktur folder |
-| [Development Guide](docs/03_development.md) | Workflow development |
-| [Database Guide](docs/04_database.md) | Database schema & migrations |
-| [API Documentation](docs/05_api.md) | RESTful API endpoints |
-| [Testing Guide](docs/06_testing.md) | Testing strategy & commands |
-| [Deployment Guide](docs/07_deployment.md) | Deploy ke production |
+| [Installation Guide](docs/01_installation.md) | Install project dari Git repository |
+| [Project Structure](docs/02_structure.md) | Penjelasan struktur folder & conventions |
+| [API Documentation](docs/05_api.md) | RESTful API endpoints reference |
+| [Testing Guide](docs/06_testing.md) | Running tests & coverage |
+| [Deployment Guide](docs/07_deployment.md) | Deploy ke production server |
+
+### For Learning/Building from Scratch
+| Dokumen | Deskripsi |
+|---------|-----------|
+| [Development Guides](docs/guides/README.md) | **START HERE** - Step-by-step tutorials |
+| [Setup from Scratch](docs/01_setup_from_scratch.md) | Build project dari NOL (advanced) |
+| [Requirements Management](docs/notes/requirements.md) | Dependencies best practices |
 
 ## 🛠️ Tech Stack
 
@@ -152,10 +175,14 @@ nano .env
 - **Company**: [Company Name]
 - **Started**: January 2026
 
-## 📄 License
+## � License
 
 Internal use only - Proprietary
 
 ---
 
-**🚀 Mulai dari [docs/01_setup.md](docs/01_setup.md)**
+**New to this project?**  
+→ Start with: [Installation Guide](docs/01_installation.md)
+
+**Want to learn Django & build from scratch?**  
+→ Start with: [Development Guides](docs/guides/README.md)
