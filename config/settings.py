@@ -50,6 +50,7 @@ INSTALLED_APPS = [
 
     # Local apps
     'apps.core.apps.CoreConfig',
+    'apps.accounts.apps.AccountsConfig',
 ]
 
 AUTH_USER_MODEL = 'accounts.User'
