@@ -27,7 +27,8 @@ SECRET_KEY = "django-insecure-0j8$kkjymhlmb3vis%s(ch=@dwqufrc4%_c))01kn4($l%)b0&
 
 DEBUG = os.getenv("DEBUG", "False") == "True"
 
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "").split(",")
+_env_hosts = os.getenv("ALLOWED_HOSTS", "").split(",")
+ALLOWED_HOSTS = [host for host in _env_hosts if host] if any(_env_hosts) and _env_hosts != [''] else ['localhost', '127.0.0.1', '0.0.0.0']
 
 
 # Application definition
@@ -108,6 +109,8 @@ else:
 # Media files
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
