@@ -1,9 +1,9 @@
 from .base import AuditModel, SoftDeleteModel, TimeStampedModel
-from .permissions import AppPermission
+from .permissions import CorePermission
 
 __all__ = [
     'TimeStampedModel',
     'SoftDeleteModel',
     'AuditModel',
-    'AppPermission',
+    'CorePermission',
 ]
