@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -23,9 +24,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "django-insecure-0j8$kkjymhlmb3vis%s(ch=@dwqufrc4%_c))01kn4($l%)b0&"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
 
-ALLOWED_HOSTS = []
+DEBUG = os.getenv("DEBUG", "False") == "True"
+
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "").split(",")
 
 
 # Application definition
@@ -37,7 +39,66 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+
+    # Third party
+    'rest_framework',
+    'rest_framework_simplejwt',
+    'rest_framework_simplejwt.token_blacklist',
+    'drf_spectacular',
+    'django_filters',
+    'corsheaders',
+
+    # Local apps
+    'apps.core.apps.CoreConfig',
 ]
+
+AUTH_USER_MODEL = 'accounts.User'
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ],
+}
+
+# JWT Settings
+from datetime import timedelta
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(hours=1),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
+    'ROTATE_REFRESH_TOKENS': True,
+    'BLACKLIST_AFTER_ROTATION': True,
+    'UPDATE_LAST_LOGIN': True,
+    
+    'ALGORITHM': 'HS256',
+    'SIGNING_KEY': SECRET_KEY,
+    'VERIFYING_KEY': None,
+    'AUDIENCE': None,
+    'ISSUER': None,
+    
+    'AUTH_HEADER_TYPES': ('Bearer',),
+    'AUTH_HEADER_NAME': 'HTTP_AUTHORIZATION',
+    'USER_ID_FIELD': 'id',
+    'USER_ID_CLAIM': 'user_id',
+    
+    'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
+    'TOKEN_TYPE_CLAIM': 'token_type',
+}
+
+cors_origins = os.getenv("CORS_ALLOWED_ORIGINS")
+if cors_origins:
+    CORS_ALLOWED_ORIGINS = cors_origins.split(",")
+else:
+    CORS_ALLOWED_ORIGINS = [
+        "http://localhost:8000",
+        "http://localhost:3000",
+        "http://127.0.0.1:8000",
+        "http://127.0.0.1:3000",
+    ]
+
+# Media files
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -72,13 +133,26 @@ WSGI_APPLICATION = "config.wsgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
+DB_ENGINE = os.getenv("DB_ENGINE", "sqlite")
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+if DB_ENGINE == "sqlite":
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
+        }
     }
-}
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": os.getenv("DB_NAME"),
+            "USER": os.getenv("DB_USER"),
+            "PASSWORD": os.getenv("DB_PASSWORD"),
+            "HOST": os.getenv("DB_HOST"),
+            "PORT": os.getenv("DB_PORT", "5432"),
+        }
+    }
 
 
 # Password validation
@@ -103,13 +177,35 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 
-LANGUAGE_CODE = "en-us"
+LANGUAGE_CODE = 'id-ID'
 
-TIME_ZONE = "UTC"
+TIME_ZONE = 'Asia/Jakarta'
+LOCAL_TIMEZONE = 'Asia/Jakarta'
 
 USE_I18N = True
 
 USE_TZ = True
+
+USE_L10N = False
+
+# ========== FULL FORMAT (untuk detail view) ==========
+DATE_FORMAT = 'd/m/Y'              # 27/12/2025
+TIME_FORMAT = 'H:i:s'              # 08:00:00
+DATETIME_FORMAT = 'd/m/Y H:i:s'    # 27/12/2025 08:00:00
+
+# ========== SHORT FORMAT (untuk list/table) ==========
+SHORT_DATE_FORMAT = 'd/m/y'        # 27/12/25 (2 digit year)
+SHORT_DATETIME_FORMAT = 'd/m H:i'  # 27/12 08:00 (no year, no seconds)
+
+FIRST_DAY_OF_WEEK = 1  # Senin (0=minggu)
+
+# ========== FULL FORMAT with DAY (untuk detail view) ==========
+DATE_FORMAT_DAY = 'l, d/m/Y'              # Jumat, 27/12/2025
+DATETIME_FORMAT_DAY = 'l, d/m/Y H:i:s'    # Jumat, 27/12/2025 08:00:00
+
+# ========== SHORT FORMAT with Day (untuk list/table) ==========
+SHORT_DATE_FORMAT_DAY = 'D, d/m/y'        # Jum, 27/12/25
+SHORT_DATETIME_FORMAT_DAY = 'D, d/m H:i'  # Jum, 27/12 08:00
 
 
 # Static files (CSS, JavaScript, Images)
