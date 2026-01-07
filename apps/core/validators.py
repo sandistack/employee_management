@@ -5,7 +5,11 @@ from django.core.exceptions import ValidationError
 
 
 def validate_image_file(file):
-    """Validate image upload"""
+    """
+    Validate image file for size and extension.
+    Allowed extensions: .jpg, .jpeg, .png
+    Max size: 5MB
+    """
     # Max size 5MB
     if file.size > 5 * 1024 * 1024:
         raise ValidationError('File size cannot exceed 5MB')
@@ -18,8 +22,8 @@ def validate_image_file(file):
 
 def validate_phone_number(value):
     """
-    Validate Indonesian phone number.
-    Format: 08xxxxxxxxxx atau 62xxxxxxxxxx
+    Validate phone number format.
+    Must be 10-15 digits, start with '08' or '62'.
     """
     if not value:
         return
@@ -44,8 +48,8 @@ def validate_phone_number(value):
 
 def validate_email_domain(value):
     """
-    Validate email with common domain checks.
-    Ensures email has valid format and common domain.
+    Validate email format and block disposable email domains.
+    Allowed disposable domains: tempmail.com, throwaway.email, 10minutemail.com, guerrillamail.com, mailinator.com, trashmail.com
     """
     if not value:
         return
