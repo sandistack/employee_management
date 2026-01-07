@@ -1,39 +1,34 @@
-"""
-Dummy permission models.
-Tidak create table di database (managed=False).
-"""
+# core/models/permissions.py
 from django.db import models
 
 
-class AppPermission(models.Model):
+class CorePermission(models.Model):
     """
-    Consolidated permission model.
-    All custom permissions in one place.
+    Permission anchor model.
+    Used ONLY for custom permissions.
     """
-    
+
     class Meta:
-        managed = False
+        verbose_name = "Core Permission"
+        verbose_name_plural = "Core Permissions"
         default_permissions = ()
-        verbose_name = 'Application Permission'
-        verbose_name_plural = 'Application Permissions'
-        
         permissions = [
-            # ========== DASHBOARD ==========
+            # DASHBOARD
             ("view_company_dashboard", "Can view company-wide dashboard"),
             ("view_division_dashboard", "Can view division dashboard"),
-            ("view_own_dashboard", "Can view own dashboard only"),
+            ("view_own_dashboard", "Can view own dashboard"),
             ("export_dashboard_data", "Can export dashboard data"),
-            
-            # ========== ATTENDANCE ==========
-            ("approve_attendance", "Can approve attendance exceptions"),
+
+            # ATTENDANCE
+            ("approve_attendance", "Can approve attendance"),
             ("view_all_attendance_report", "Can view all attendance reports"),
-            
-            # ========== LEAVE ==========
-            ("approve_all_leaves", "Can approve all leave requests"),
-            ("reject_leave", "Can reject leave requests"),
-            ("cancel_approved_leave", "Can cancel approved leaves"),
-            
-            # ========== REPORTS ==========
+
+            # LEAVE
+            ("approve_all_leaves", "Can approve all leaves"),
+            ("reject_leave", "Can reject leave"),
+            ("cancel_approved_leave", "Can cancel approved leave"),
+
+            # REPORT
             ("export_attendance_report", "Can export attendance report"),
             ("export_leave_report", "Can export leave report"),
             ("export_payroll_report", "Can export payroll report"),
