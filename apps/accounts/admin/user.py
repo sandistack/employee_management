@@ -24,7 +24,7 @@ class UserAdmin(BaseUserAdmin):
     fieldsets = BaseUserAdmin.fieldsets + (
         ('Employee Info', {
             'fields': (
-                'employee_id', 'phone', 'division',
+                'employee_id', 'phone', 'division', 'position',
                 'hire_date', 'type_of_employment', 'status'
             )
         }),
@@ -41,7 +41,7 @@ class UserAdmin(BaseUserAdmin):
         ('Employee Info', {
             'fields': (
                 'employee_id', 'email', 'phone',
-                'division', 'hire_date'
+                'division', 'position', 'hire_date'
             )
         }),
     )

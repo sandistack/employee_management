@@ -185,3 +185,12 @@ class User(AbstractUser):
 
     def get_division_path(self):
         return self.division.full_path if self.division else "-"
+
+    def get_role_display(self):
+        """Display role berdasarkan position atau groups"""
+        if self.position:
+            return self.position.name
+        groups = self.groups.all()
+        if groups:
+            return ", ".join([g.name for g in groups])
+        return "-"
