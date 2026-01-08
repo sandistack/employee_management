@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 import os
 from pathlib import Path
+from pickle import FALSE, TRUE
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,7 +26,7 @@ SECRET_KEY = "django-insecure-0j8$kkjymhlmb3vis%s(ch=@dwqufrc4%_c))01kn4($l%)b0&
 
 # SECURITY WARNING: don't run with debug turned on in production!
 
-DEBUG = os.getenv("DEBUG", False) == True
+DEBUG = TRUE
 
 _env_hosts = os.getenv("ALLOWED_HOSTS", "").split(",")
 ALLOWED_HOSTS = [host for host in _env_hosts if host] if any(_env_hosts) and _env_hosts != [''] else ['localhost', '127.0.0.1', '0.0.0.0']

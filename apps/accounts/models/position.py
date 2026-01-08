@@ -1,4 +1,3 @@
-# accounts/models/position.py
 from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -42,10 +41,9 @@ class Position(AuditModel):
         related_name="subordinates",
         help_text="Atasan langsung (opsional, untuk navigasi hirarki)"
     )
-
     group = models.OneToOneField(
         Group,
-        on_delete=models.SET_NULL,
+        on_delete=models.SET_NULL,  
         null=True,
         blank=True,
         related_name="position",
@@ -60,38 +58,46 @@ class Position(AuditModel):
         verbose_name_plural = "Positions"
 
     def clean(self):
-        """
-        Validasi konsistensi hirarki.
-        """
         if self.parent and self.parent.level >= self.level:
             raise ValidationError(
                 "Parent position must have lower level than this position."
             )
 
-    def sync_user_groups(self):
-        """
-        Sinkronisasi Django Groups untuk semua user dengan jabatan ini.
-        """
-        if not self.group:
-            return
-        
-        users = self.employees.all()
-        for user in users:
-            user.groups.clear()
-            user.groups.add(self.group)
-
     def save(self, *args, **kwargs):
+        is_new = self.pk is None
+        
+        if is_new and not self.group:
+            self.group = Group.objects.create(name=f"Position: {self.name}")
+        
+        elif not is_new and self.group:
+            old_position = Position.objects.get(pk=self.pk)
+            if old_position.name != self.name:
+                self.group.name = f"Position: {self.name}"
+                self.group.save()
+        
         self.clean()
         super().save(*args, **kwargs)
-        self.sync_user_groups()
 
     def delete(self, *args, **kwargs):
         """
-        Hapus relasi Group saat menghapus jabatan.
+        Override delete untuk handle soft delete.
+        Cek apakah ini soft delete atau hard delete.
         """
+        super().delete(*args, **kwargs)
+
+    def hard_delete(self):
+        """Hard delete: hapus Group juga"""
         if self.group:
             self.group.delete()
-        super().delete(*args, **kwargs)
+        
+        super(AuditModel, self).delete()
+
+    @property
+    def permissions(self):
+        """Get permissions dari group"""
+        if self.group:
+            return self.group.permissions.all()
+        return []
 
     def __str__(self):
         return f"{self.code} - {self.name} (Level {self.level})"

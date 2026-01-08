@@ -6,14 +6,16 @@ from apps.accounts.models import User
 
 @admin.register(User)
 class UserAdmin(BaseUserAdmin):
-    """Admin untuk Custom User"""
     list_display = [
         'employee_id', 'username', 'get_full_name', 'email',
-        'division', 'get_role', 'status', 'is_active'
+        'division', 'get_positions', 'status', 'is_active'
     ]
+    
+    list_display_links = ['employee_id', 'username']
+    
     list_filter = [
         'is_active', 'is_staff', 'status',
-        'type_of_employment', 'groups', 'division'
+        'type_of_employment', 'positions', 'division'
     ]
     search_fields = [
         'employee_id', 'username', 'email',
@@ -21,10 +23,14 @@ class UserAdmin(BaseUserAdmin):
     ]
     ordering = ['employee_id']
     
+    filter_horizontal = ['positions']
+ 
+    readonly_fields = ['face_encoding']
+    
     fieldsets = BaseUserAdmin.fieldsets + (
         ('Employee Info', {
             'fields': (
-                'employee_id', 'phone', 'division', 'position',
+                'employee_id', 'phone', 'division', 'positions',
                 'hire_date', 'type_of_employment', 'status'
             )
         }),
@@ -41,12 +47,14 @@ class UserAdmin(BaseUserAdmin):
         ('Employee Info', {
             'fields': (
                 'employee_id', 'email', 'phone',
-                'division', 'position', 'hire_date'
+                'division', 'positions', 'hire_date'
             )
         }),
     )
     
-    def get_role(self, obj):
-        """Display role dari Groups"""
-        return obj.get_role_display()
-    get_role.short_description = 'Role'
+    def get_positions(self, obj):
+        """Display semua positions user"""
+        if not obj.positions.exists():
+            return '-'
+        return ', '.join([pos.name for pos in obj.positions.all()])
+    get_positions.short_description = 'Positions'

@@ -64,13 +64,12 @@ class User(AbstractUser):
         help_text='Divisi/Departemen organisasi (opsional)'
     )
 
-    position = models.ForeignKey(
+    positions = models.ManyToManyField(
         'accounts.Position',
-        on_delete=models.PROTECT,
         related_name='employees',
-        null=True,
-        blank=True,
-        help_text='Jabatan/posisi pekerjaan (opsional)'
+        null=True,                      # ← Boleh kosong di database
+        blank=True,                     # ← Boleh kosong di form
+        help_text='Jabatan/posisi pekerjaan (bisa multiple roles)'
     )
 
     hire_date = models.DateField(
@@ -194,3 +193,9 @@ class User(AbstractUser):
         if groups:
             return ", ".join([g.name for g in groups])
         return "-"
+    
+    def get_positions_display(self):
+        """Return string semua positions"""
+        if not self.positions.exists():
+            return 'No Position'
+        return ', '.join([pos.name for pos in self.positions.all()])
