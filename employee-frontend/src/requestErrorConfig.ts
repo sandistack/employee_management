@@ -9,6 +9,9 @@ import type { AxiosRequestConfig } from 'axios';
  * @doc https://umijs.org/docs/max/request#配置
  */
 export const errorConfig: RequestConfig = {
+  // Base URL untuk Django backend
+  baseURL: 'http://localhost:8000',
+
   errorConfig: {
     errorHandler: (error: any, opts: any) => {
       if (opts?.skipErrorHandler) throw error;
