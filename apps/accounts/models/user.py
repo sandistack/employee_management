@@ -67,8 +67,7 @@ class User(AbstractUser):
     positions = models.ManyToManyField(
         'accounts.Position',
         related_name='employees',
-        null=True,                      # ← Boleh kosong di database
-        blank=True,                     # ← Boleh kosong di form
+        blank=True,
         help_text='Jabatan/posisi pekerjaan (bisa multiple roles)'
     )
 
@@ -186,14 +185,18 @@ class User(AbstractUser):
         return self.division.full_path if self.division else "-"
 
     def get_role_display(self):
-        """Display role berdasarkan position atau groups"""
-        if self.position:
-            return self.position.name
+        """Display role berdasarkan positions atau groups"""
+        positions = self.positions.all()
+        if positions.exists():
+            return ", ".join([pos.name for pos in positions])
+        
+        # Fallback ke groups
         groups = self.groups.all()
-        if groups:
+        if groups.exists():
             return ", ".join([g.name for g in groups])
+        
         return "-"
-    
+
     def get_positions_display(self):
         """Return string semua positions"""
         if not self.positions.exists():
