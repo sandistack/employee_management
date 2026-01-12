@@ -15,7 +15,7 @@ const Settings: ProLayoutProps & {
   fixSiderbar: true,
   colorWeak: false,
   title: 'Employee Management',
-  pwa: true,
+  pwa: false,
   logo: 'icons/icon.svg',
   iconfontUrl: '',
 };

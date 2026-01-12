@@ -5,7 +5,7 @@ import {
 } from '@ant-design/icons';
 import { history, useModel } from '@umijs/max';
 import type { MenuProps } from 'antd';
-import { Spin } from 'antd';
+import { Spin, message } from 'antd';
 import { createStyles } from 'antd-style';
 import React from 'react';
 import { flushSync } from 'react-dom';
@@ -20,7 +20,8 @@ export type GlobalHeaderRightProps = {
 export const AvatarName = () => {
   const { initialState } = useModel('@@initialState');
   const { currentUser } = initialState || {};
-  return <span className="anticon">{currentUser?.name}</span>;
+  const displayName = currentUser?.first_name || currentUser?.username;
+  return <span className="anticon">{displayName}</span>;
 };
 
 const useStyles = createStyles(({ token }) => {
@@ -49,7 +50,17 @@ export const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({
    * 退出登录，并且将当前的 url 保存
    */
   const loginOut = async () => {
-    await outLogin();
+    const refresh = localStorage.getItem('refreshToken') || '';
+    try {
+      if (refresh) {
+        await outLogin({ refresh });
+      }
+    } catch (error) {
+      message.warning('Sesi sudah berakhir.');
+    } finally {
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
+    }
     const { search, pathname } = window.location;
     const urlParams = new URL(window.location.href).searchParams;
     const searchParams = new URLSearchParams({
@@ -98,8 +109,9 @@ export const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({
   }
 
   const { currentUser } = initialState;
+  const displayName = currentUser?.first_name || currentUser?.username;
 
-  if (!currentUser || !currentUser.name) {
+  if (!currentUser || !displayName) {
     return loading;
   }
 
