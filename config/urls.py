@@ -15,11 +15,17 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import include, path
+from django.urls import include, path, re_path
+from django.views.generic import TemplateView
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     
     # API Routes
     path('api/', include(('api.urls', 'api'), namespace='api')),
+
+    # Frontend build (Umi/Ant Design Pro) served by Django
+    path('', TemplateView.as_view(template_name="index.html"), name='frontend'),
+    # Exclude admin/api/static/media from SPA fallback so Django admin works
+    re_path(r'^(?!admin)(?!admin/)(?!api/)(?!static/)(?!media/).*$' , TemplateView.as_view(template_name="index.html")),
 ]

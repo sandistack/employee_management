@@ -16,6 +16,7 @@ from pickle import FALSE, TRUE
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+FRONTEND_DIST = BASE_DIR / "employee-frontend" / "dist"
 
 
 # Quick-start development settings - unsuitable for production
@@ -26,14 +27,15 @@ SECRET_KEY = "django-insecure-0j8$kkjymhlmb3vis%s(ch=@dwqufrc4%_c))01kn4($l%)b0&
 
 # SECURITY WARNING: don't run with debug turned on in production!
 
-DEBUG = TRUE
+DEBUG = TRUE  # noqa: N816  # keep uppercase constant but value truthy
 
 _env_hosts = os.getenv("ALLOWED_HOSTS", "").split(",")
 ALLOWED_HOSTS = [host for host in _env_hosts if host] if any(_env_hosts) and _env_hosts != [''] else ['localhost', '127.0.0.1', '0.0.0.0']
 
 
-# Application definition
+AUTH_USER_MODEL = 'accounts.User'
 
+# Application definition
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -54,8 +56,6 @@ INSTALLED_APPS = [
     'apps.core.apps.CoreConfig',
     'apps.accounts.apps.AccountsConfig',
 ]
-
-AUTH_USER_MODEL = 'accounts.User'
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
@@ -103,8 +103,10 @@ else:
     CORS_ALLOWED_ORIGINS = [
         "http://localhost:8000",
         "http://localhost:3000",
+        "http://localhost:8001",
         "http://127.0.0.1:8000",
         "http://127.0.0.1:3000",
+        "http://127.0.0.1:8001",
     ]
 
 # Media files
@@ -128,7 +130,7 @@ ROOT_URLCONF = "config.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [FRONTEND_DIST],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -224,7 +226,8 @@ SHORT_DATETIME_FORMAT_DAY = 'D, d/m H:i'  # Jum, 27/12 08:00
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
-STATIC_URL = "static/"
+STATIC_URL = "/static/"
+STATICFILES_DIRS = [FRONTEND_DIST] if FRONTEND_DIST.exists() else []
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
