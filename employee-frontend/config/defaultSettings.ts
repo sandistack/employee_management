@@ -16,7 +16,7 @@ const Settings: ProLayoutProps & {
   colorWeak: false,
   title: 'Employee Management',
   pwa: false,
-  logo: 'icons/icon.svg',
+  logo: '/static/icons/icon.svg',
   iconfontUrl: '',
 };
 

@@ -9,8 +9,10 @@ import type { AxiosRequestConfig } from 'axios';
  * @doc https://umijs.org/docs/max/request#配置
  */
 export const errorConfig: RequestConfig = {
-  // Base URL untuk Django backend
-  baseURL: 'http://localhost:8000',
+  // Base URL untuk Django backend - kosongkan untuk gunakan proxy di development
+  // In development, requests will be proxied to http://localhost:8000
+  // In production (after build), requests will be made to the same origin
+  baseURL: process.env.NODE_ENV === 'production' ? '' : '',
 
   errorConfig: {
     errorHandler: (error: any, opts: any) => {
