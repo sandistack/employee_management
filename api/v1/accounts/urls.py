@@ -9,10 +9,13 @@ from api.v1.accounts.viewsets.user import (
     ProfileView,
     RegisterView,
 )
+from api.v1.accounts.viewsets.division import (
+    DivisionViewSet,
+)
 
 # Router for viewsets
 router = DefaultRouter()
-# router.register(r'divisions', DivisionViewSet, basename='division')
+router.register(r'divisions', DivisionViewSet, basename='division')
 
 urlpatterns = [
     # Auth
@@ -24,5 +27,6 @@ urlpatterns = [
     # Profile
     path('profile/', ProfileView.as_view(), name='profile'),
     path('change-password/', ChangePasswordView.as_view(), name='change_password'),
-    
 ]
+
+urlpatterns += router.urls

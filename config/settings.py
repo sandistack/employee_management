@@ -68,6 +68,127 @@ REST_FRAMEWORK = {
         'rest_framework.filters.SearchFilter',
         'rest_framework.filters.OrderingFilter',
     ],
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 20,
+}
+
+# drf-spectacular Settings
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Employee Management API',
+    'DESCRIPTION': '''
+    Complete API documentation for Employee Management System
+    
+    ## API Versioning
+    - Current version: **v1**
+    - Base URL: `/api/v1/`
+    - All endpoints are prefixed with `/api/v1/`
+    
+    ## Authentication
+    - JWT Bearer token authentication
+    - Get token via `/api/v1/login/`
+    - Use token in Authorization header: `Bearer <token>`
+    
+    ## Features
+    - User management & authentication
+    - Division management
+    - Position management (coming soon)
+    - Employee management (coming soon)
+    ''',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    
+    # API Versioning support
+    'SCHEMA_PATH_PREFIX': r'/api/v1',  # Specify v1 explicitly
+    'SCHEMA_PATH_PREFIX_TRIM': True,
+    
+    # Authentication
+    'SECURITY': [{'bearerAuth': []}],
+    'COMPONENT_SPLIT_REQUEST': True,
+    
+    # Swagger UI settings
+    'SWAGGER_UI_SETTINGS': {
+        'deepLinking': True,
+        'persistAuthorization': True,
+        'displayOperationId': True,
+        'displayRequestDuration': True,
+        'filter': True,
+        'tryItOutEnabled': True,
+    },
+    
+    # Servers - untuk different environments
+    'SERVERS': [
+        {
+            'url': 'http://localhost:8000/api/v1',
+            'description': 'Development server - API v1',
+        },
+        {
+            'url': 'http://127.0.0.1:8000/api/v1',
+            'description': 'Local server - API v1',
+        },
+        # Uncomment untuk production
+        # {
+        #     'url': 'https://api.yourcompany.com/api/v1',
+        #     'description': 'Production server - API v1',
+        # },
+    ],
+    
+    # API Versioning info
+    'CONTACT': {
+        'name': 'API Support',
+        'email': 'support@yourcompany.com',
+    },
+    'LICENSE': {
+        'name': 'Proprietary',
+    },
+    
+    # Token authentication
+    'APPEND_COMPONENTS': {
+        'securitySchemes': {
+            'bearerAuth': {
+                'type': 'http',
+                'scheme': 'bearer',
+                'bearerFormat': 'JWT',
+                'description': '''
+                JWT Bearer token authentication.
+                
+                To get token:
+                1. POST /api/v1/login/ with email & password
+                2. Copy the access token from response
+                3. Click "Authorize" button above
+                4. Enter: Bearer <your-access-token>
+                
+                Token expires in 1 hour, use refresh token to get new one.
+                '''
+            }
+        }
+    },
+    
+    # Group operations by tags
+    'TAGS': [
+        {
+            'name': 'Authentication',
+            'description': 'User registration, login, logout, and token management'
+        },
+        {
+            'name': 'Users',
+            'description': 'User profile and account management'
+        },
+        {
+            'name': 'Divisions',
+            'description': 'Division/Department management'
+        },
+        {
+            'name': 'Positions',
+            'description': 'Position/Job title management'
+        },
+    ],
+    
+    # Enhanced schema generation
+    'ENUM_NAME_OVERRIDES': {
+        'ValidationErrorEnum': 'django.core.exceptions.ValidationError',
+    },
+    'POSTPROCESSING_HOOKS': [],
 }
 
 # JWT Settings
